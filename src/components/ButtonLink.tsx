@@ -1,0 +1,42 @@
+"use client";
+
+import { motion } from "framer-motion";
+import Link from "next/link";
+
+const MotionLink = motion.create(Link);
+
+type ButtonLinkProps = {
+  href: string;
+  children: React.ReactNode;
+  variant?: "dark" | "gold" | "light" | "outline";
+  className?: string;
+  onClick?: () => void;
+};
+
+export function ButtonLink({
+  href,
+  children,
+  variant = "dark",
+  className = "",
+  onClick,
+}: ButtonLinkProps) {
+  const variants = {
+    dark: "bg-[#0B1F3A] text-white shadow-[0_16px_38px_rgba(11,31,58,0.24)] hover:bg-[#142F55] hover:shadow-[0_20px_48px_rgba(11,31,58,0.3)]",
+    gold: "bg-[#C8A96A] text-[#0B1F3A] shadow-[0_16px_38px_rgba(200,169,106,0.28)] hover:bg-[#D6BA7D]",
+    light: "bg-white text-[#0B1F3A] shadow-[0_16px_38px_rgba(11,31,58,0.12)] hover:bg-[#F7F4EC]",
+    outline:
+      "border border-[#0B1F3A]/15 bg-white/55 text-[#0B1F3A] hover:border-[#C8A96A]/70 hover:bg-white hover:shadow-[0_16px_38px_rgba(11,31,58,0.1)]",
+  };
+
+  return (
+    <MotionLink
+      href={href}
+      onClick={onClick}
+      whileTap={{ scale: 0.97, opacity: 0.88 }}
+      transition={{ duration: 0.12 }}
+      className={`inline-flex min-h-12 touch-manipulation items-center justify-center rounded-sm px-5 text-sm font-semibold transition duration-200 hover:-translate-y-0.5 ${variants[variant]} ${className}`}
+    >
+      {children}
+    </MotionLink>
+  );
+}
