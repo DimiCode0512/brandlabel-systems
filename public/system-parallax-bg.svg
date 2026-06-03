@@ -1,0 +1,49 @@
+<svg width="900" height="1200" viewBox="0 0 900 1200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="900" height="1200" fill="#050A14"/>
+  <rect width="900" height="1200" fill="url(#baseGlow)"/>
+  <g opacity="0.2">
+    <path d="M0 120H900M0 240H900M0 360H900M0 480H900M0 600H900M0 720H900M0 840H900M0 960H900M0 1080H900" stroke="#FFFFFF"/>
+    <path d="M90 0V1200M180 0V1200M270 0V1200M360 0V1200M450 0V1200M540 0V1200M630 0V1200M720 0V1200M810 0V1200" stroke="#FFFFFF"/>
+  </g>
+  <g filter="url(#blurA)" opacity="0.72">
+    <circle cx="720" cy="190" r="160" fill="#C8A96A"/>
+    <circle cx="128" cy="880" r="210" fill="#123A68"/>
+  </g>
+  <g opacity="0.6">
+    <path d="M122 250C236 156 383 172 482 290C590 418 736 330 795 224" stroke="#C8A96A" stroke-width="4" stroke-linecap="round"/>
+    <path d="M98 780C208 650 344 654 438 760C538 872 682 820 794 684" stroke="#C8A96A" stroke-width="4" stroke-linecap="round"/>
+    <path d="M170 510C298 438 430 462 520 536C610 610 700 608 790 542" stroke="#FFFFFF" stroke-opacity="0.28" stroke-width="3" stroke-linecap="round"/>
+  </g>
+  <g opacity="0.9">
+    <rect x="112" y="144" width="210" height="130" rx="24" fill="#08192E" stroke="#FFFFFF" stroke-opacity="0.12"/>
+    <rect x="150" y="184" width="108" height="14" rx="7" fill="#FFFFFF" fill-opacity="0.18"/>
+    <rect x="150" y="220" width="138" height="14" rx="7" fill="#C8A96A" fill-opacity="0.34"/>
+    <rect x="580" y="250" width="210" height="130" rx="24" fill="#08192E" stroke="#C8A96A" stroke-opacity="0.2"/>
+    <rect x="618" y="292" width="108" height="14" rx="7" fill="#FFFFFF" fill-opacity="0.18"/>
+    <rect x="618" y="328" width="138" height="14" rx="7" fill="#C8A96A" fill-opacity="0.34"/>
+    <rect x="150" y="560" width="240" height="150" rx="26" fill="#08192E" stroke="#FFFFFF" stroke-opacity="0.12"/>
+    <rect x="190" y="606" width="156" height="16" rx="8" fill="#C8A96A" fill-opacity="0.32"/>
+    <rect x="190" y="646" width="116" height="16" rx="8" fill="#FFFFFF" fill-opacity="0.16"/>
+    <rect x="530" y="820" width="250" height="160" rx="28" fill="#08192E" stroke="#C8A96A" stroke-opacity="0.22"/>
+    <rect x="572" y="870" width="160" height="16" rx="8" fill="#C8A96A" fill-opacity="0.32"/>
+    <rect x="572" y="914" width="118" height="16" rx="8" fill="#FFFFFF" fill-opacity="0.16"/>
+  </g>
+  <g>
+    <circle cx="122" cy="250" r="15" fill="#C8A96A"/>
+    <circle cx="482" cy="290" r="15" fill="#C8A96A"/>
+    <circle cx="795" cy="224" r="15" fill="#C8A96A"/>
+    <circle cx="98" cy="780" r="15" fill="#C8A96A"/>
+    <circle cx="438" cy="760" r="15" fill="#C8A96A"/>
+    <circle cx="794" cy="684" r="15" fill="#C8A96A"/>
+  </g>
+  <defs>
+    <radialGradient id="baseGlow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(676 246) rotate(120) scale(900 680)">
+      <stop stop-color="#123A68"/>
+      <stop offset="0.48" stop-color="#0B1F3A"/>
+      <stop offset="1" stop-color="#050A14"/>
+    </radialGradient>
+    <filter id="blurA" x="-160" y="-160" width="1220" height="1520" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="92"/>
+    </filter>
+  </defs>
+</svg>

@@ -1,0 +1,25 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="630" fill="#08172C"/>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <circle cx="1040" cy="70" r="280" fill="#C8A96A" fill-opacity="0.18"/>
+  <circle cx="120" cy="560" r="240" fill="#C8A96A" fill-opacity="0.1"/>
+  <g opacity="0.18">
+    <path d="M0 105H1200M0 210H1200M0 315H1200M0 420H1200M0 525H1200" stroke="white"/>
+    <path d="M100 0V630M200 0V630M300 0V630M400 0V630M500 0V630M600 0V630M700 0V630M800 0V630M900 0V630M1000 0V630M1100 0V630" stroke="white"/>
+  </g>
+  <rect x="72" y="72" width="74" height="74" stroke="white" stroke-opacity="0.24"/>
+  <text x="109" y="120" text-anchor="middle" fill="#FFFDF8" font-family="Georgia, serif" font-size="30" font-weight="700">BL</text>
+  <rect x="805" y="72" width="323" height="70" stroke="#C8A96A" stroke-opacity="0.46"/>
+  <text x="966" y="116" text-anchor="middle" fill="#C8A96A" font-family="Georgia, serif" font-size="28">Custom systems agency</text>
+  <text x="72" y="264" fill="#C8A96A" font-family="Georgia, serif" font-size="32">BrandLabel Systems</text>
+  <text x="72" y="360" fill="#FFFDF8" font-family="Georgia, serif" font-size="78" font-weight="700">Clear operations</text>
+  <text x="72" y="438" fill="#FFFDF8" font-family="Georgia, serif" font-size="78" font-weight="700">from one custom system.</text>
+  <text x="72" y="520" fill="#D7DCE5" font-family="Georgia, serif" font-size="34">Internal systems, web apps, automation, and service websites.</text>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="630" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#08172C"/>
+      <stop offset="0.52" stop-color="#0B1F3A"/>
+      <stop offset="1" stop-color="#121212"/>
+    </linearGradient>
+  </defs>
+</svg>

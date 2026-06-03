@@ -8,40 +8,40 @@ const workflowItems = [
 export function SystemMockup() {
   return (
     <div
-      className="surface mockup-root relative mx-auto w-full max-w-xl overflow-visible rounded-md p-3 sm:p-4 lg:max-w-none"
+      className="surface mockup-root relative mx-auto w-full max-w-[calc(100vw-2.5rem)] touch-pan-y overflow-visible rounded-md p-3 sm:max-w-xl sm:p-4 lg:max-w-none"
       data-mockup-root
     >
       <div className="pointer-events-none absolute -right-16 -top-16 size-56 rounded-full bg-[#C8A96A]/22 blur-3xl lg:size-64" />
       <div className="pointer-events-none absolute -bottom-16 left-4 size-60 rounded-full bg-[#143963]/28 blur-3xl lg:left-8 lg:size-72" />
 
-      <div className="relative mx-auto max-w-[640px] pb-24 pt-3 sm:max-w-[720px] lg:max-w-none lg:scale-[1.18] lg:pb-20 lg:pt-4 xl:scale-[1.22]">
+      <div className="relative mx-auto max-w-[640px] pb-20 pt-3 sm:max-w-[720px] sm:pb-24 lg:max-w-none lg:scale-[1.18] lg:pb-20 lg:pt-4 xl:scale-[1.22]">
         {/* Main operations dashboard */}
-        <div className="relative z-10 overflow-hidden rounded-sm border border-white/10 bg-[#071423] p-5 text-white shadow-[0_40px_100px_rgba(11,31,58,0.32)] sm:p-6 lg:mr-8 lg:mt-5">
+        <div className="relative z-10 overflow-hidden rounded-sm border border-white/10 bg-[#071423] p-4 text-white shadow-[0_40px_100px_rgba(11,31,58,0.32)] sm:p-6 lg:mr-8 lg:mt-5">
           <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#C8A96A] to-transparent opacity-90" />
-          <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-3 sm:mb-6">
             <div>
               <p className="text-[11px] uppercase tracking-[0.2em] text-[#C8A96A] sm:text-xs">Operations OS</p>
-              <p className="mt-1 text-xl font-semibold sm:text-2xl">BrandLabel control room</p>
+              <p className="mt-1 text-lg font-semibold sm:text-2xl">BrandLabel control room</p>
             </div>
             <div className="shrink-0 rounded-sm border border-[#C8A96A]/35 bg-[#C8A96A]/15 px-3 py-2 text-xs font-semibold text-[#F3DEAA]">
               Live system
             </div>
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-2 lg:gap-4">
+          <div className="grid grid-cols-2 gap-2 sm:gap-3 lg:gap-4">
             {workflowItems.map((item) => (
               <div
                 key={item.label}
-                className="rounded-sm border border-white/10 bg-white/[0.07] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]"
+                className="rounded-sm border border-white/10 bg-white/[0.07] p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] sm:p-4"
               >
                 <p className="text-xs text-slate-400">{item.label}</p>
-                <p className="mt-2 text-2xl font-semibold sm:text-3xl">{item.value}</p>
-                <p className="mt-2 text-xs text-[#C8A96A]">{item.meta}</p>
+                <p className="mt-1 text-2xl font-semibold sm:mt-2 sm:text-3xl">{item.value}</p>
+                <p className="mt-1 text-[11px] text-[#C8A96A] sm:mt-2 sm:text-xs">{item.meta}</p>
               </div>
             ))}
           </div>
 
-          <div className="mt-4 grid gap-4 lg:grid-cols-[0.62fr_0.38fr] lg:gap-5">
+          <div className="mt-4 hidden gap-4 sm:grid lg:grid-cols-[0.62fr_0.38fr] lg:gap-5">
             <div className="rounded-sm border border-white/10 bg-white/[0.07] p-4 sm:p-5">
               <div className="mb-4 flex items-center justify-between gap-2">
                 <p className="text-base font-medium">Workflow tracker</p>

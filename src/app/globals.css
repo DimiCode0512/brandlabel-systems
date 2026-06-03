@@ -8,7 +8,10 @@
   --blue: #0b1f3a;
   --blue-soft: #142f55;
   --gold: #c8a96a;
+  --gold-strong: #8f6b24;
   --gold-soft: #eadfbe;
+  --teal: #2bb3a3;
+  --teal-dark: #087e74;
 }
 
 * {
@@ -17,18 +20,34 @@
 
 html {
   scroll-behavior: smooth;
-  overflow-x: clip;
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100%;
 }
 
 body {
   margin: 0;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
   background:
     radial-gradient(circle at 12% 0%, rgba(200, 169, 106, 0.16), transparent 28rem),
     radial-gradient(circle at 90% 8%, rgba(11, 31, 58, 0.11), transparent 34rem),
     linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(246, 243, 236, 0.96)),
     var(--background);
   color: var(--foreground);
-  font-family: var(--font-inter), Arial, Helvetica, sans-serif;
+  font-family: var(--font-display), Georgia, serif;
+}
+
+body :where(a, button, input, textarea, select, p, span, div, h1, h2, h3, h4, h5, h6, label, li) {
+  font-family: var(--font-display), Georgia, serif;
+}
+
+button,
+input,
+textarea,
+select {
+  font-family: inherit;
 }
 
 ::selection {

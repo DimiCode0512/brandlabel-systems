@@ -1,7 +1,7 @@
 "use client";
 
 import { Container } from "@/components/Container";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useScroll, useTransform } from "framer-motion";
 import {
   useEffect,
   useRef,
@@ -15,32 +15,32 @@ const CAROUSEL_EASE = [0.22, 1, 0.36, 1] as const;
 const SHOWCASE_BLOCKS = [
   {
     step: 1,
-    title: "From scattered tools",
-    text: "Excel files, messages, calendars, and documents all live in different places.",
+    title: "The problem",
+    text: "Work is split across Excel, WhatsApp, email, and folders.",
     visual: "scattered",
   },
   {
     step: 2,
-    title: "One operating dashboard",
-    text: "Projects, clients, tasks, documents, and approvals become visible in one place.",
+    title: "One clear hub",
+    text: "Projects, clients, tasks, and documents move into one place.",
     visual: "dashboard",
   },
   {
     step: 3,
-    title: "Documents signed online",
-    text: "Send agreements, collect approvals, and validate signatures with OTP email verification.",
+    title: "Client approvals",
+    text: "Send documents, collect approvals, and track signatures online.",
     visual: "signing",
   },
   {
     step: 4,
-    title: "Team activity tracked clearly",
-    text: "Clock-in, clock-out, geolocation, and job status help managers see what is happening.",
+    title: "Team visibility",
+    text: "See who is working, where things stand, and what needs attention.",
     visual: "team",
   },
   {
     step: 5,
-    title: "Built around your workflow",
-    text: "The system follows how your business actually works, not how generic software expects you to work.",
+    title: "Your system",
+    text: "A custom workflow that fits how your business actually runs.",
     visual: "workflow",
   },
 ] as const;
@@ -317,30 +317,236 @@ const VISUALS: Record<VisualKey, () => ReactElement> = {
 
 const STEP_COUNT = SHOWCASE_BLOCKS.length;
 
+function MobileParallaxShowcase() {
+  const parallaxRef = useRef<HTMLDivElement | null>(null);
+  const { scrollYProgress } = useScroll({
+    target: parallaxRef,
+    offset: ["start end", "end start"],
+  });
+  const backgroundY = useTransform(scrollYProgress, [0, 1], [78, -128]);
+  const backgroundScale = useTransform(scrollYProgress, [0, 1], [1.1, 1.02]);
+  const gridY = useTransform(scrollYProgress, [0, 1], [42, -42]);
+  const dashboardY = useTransform(scrollYProgress, [0, 1], [82, -56]);
+  const dashboardRotate = useTransform(scrollYProgress, [0, 1], [-1.4, 1.2]);
+  const chaosY = useTransform(scrollYProgress, [0, 1], [138, -92]);
+  const chaosX = useTransform(scrollYProgress, [0, 1], [-18, 12]);
+  const workflowY = useTransform(scrollYProgress, [0, 1], [68, -132]);
+  const workflowX = useTransform(scrollYProgress, [0, 1], [18, -14]);
+  const portalY = useTransform(scrollYProgress, [0, 1], [156, -72]);
+
+  return (
+    <div
+      ref={parallaxRef}
+      className="relative mt-6 h-[35rem] overflow-hidden rounded-2xl border border-[#C8A96A]/20 bg-[#050a14] shadow-[0_30px_80px_rgba(11,31,58,0.28)] lg:h-[34rem]"
+    >
+      <div className="absolute inset-0 overflow-hidden">
+        <motion.div
+          className="pointer-events-none absolute -inset-x-16 -inset-y-24 bg-cover bg-center opacity-48"
+          style={{
+            y: backgroundY,
+            scale: backgroundScale,
+            backgroundImage: "url('/system-parallax-bg.svg')",
+          }}
+        />
+        <motion.div
+          className="pointer-events-none absolute inset-0 opacity-[0.22] [background-image:linear-gradient(rgba(255,255,255,0.07)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.06)_1px,transparent_1px)] [background-size:34px_34px]"
+          style={{ y: gridY }}
+        />
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_28%_22%,rgba(200,169,106,0.2),transparent_34%),linear-gradient(180deg,rgba(5,10,20,0.72)_0%,rgba(5,10,20,0.2)_46%,rgba(5,10,20,0.7)_100%)]" />
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-36 bg-gradient-to-b from-[#050a14] via-[#050a14]/82 to-transparent" />
+
+        <div className="relative z-10 flex h-full flex-col p-4">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <h3 className="font-display text-2xl font-semibold leading-tight text-white">
+                Live system map
+              </h3>
+            </div>
+            <div className="rounded-full border border-[#C8A96A]/35 bg-[#C8A96A]/14 px-3 py-1 text-[10px] font-semibold text-[#F3DEAA]">
+              Mobile OS
+            </div>
+          </div>
+
+          <div className="relative mx-auto mt-3 h-[25rem] w-full max-w-sm flex-1 lg:h-[25.5rem] lg:max-w-5xl">
+            <motion.div
+              className="absolute left-2 right-2 top-[6.1rem] rounded-2xl border border-white/12 bg-[#071423]/95 p-3 text-white shadow-[0_28px_70px_rgba(0,0,0,0.42)] backdrop-blur lg:left-[25%] lg:right-[25%] lg:top-[6.4rem] lg:p-4"
+              style={{ y: dashboardY, rotate: dashboardRotate }}
+            >
+              <div className="flex items-center justify-between border-b border-white/10 pb-2">
+                <div>
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#C8A96A]">
+                    BrandLabel OS
+                  </p>
+                  <p className="font-display text-xl font-semibold">
+                    Operating dashboard
+                  </p>
+                </div>
+                <span className="rounded-sm border border-[#C8A96A]/35 bg-[#C8A96A]/15 px-2 py-1 text-[10px] font-semibold text-[#F3DEAA]">
+                  Live
+                </span>
+              </div>
+              <div className="mt-3 grid grid-cols-3 gap-2">
+                {[
+                  ["Projects", "24"],
+                  ["Clients", "42"],
+                  ["Tasks", "118"],
+                ].map(([label, value]) => (
+                  <div key={label} className="rounded-md border border-white/10 bg-white/[0.06] p-2">
+                    <p className="text-[10px] text-slate-400">{label}</p>
+                    <p className="text-lg font-semibold tabular-nums">{value}</p>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-3 space-y-1.5">
+                {["Quote approved", "Visit assigned", "Agreement signed"].map((item, index) => (
+                  <div key={item} className="flex items-center gap-2 rounded-md border border-white/10 bg-white/[0.05] px-2 py-1.5">
+                    <span className={`size-1.5 rounded-full ${index === 0 ? "bg-[#C8A96A]" : "bg-slate-500"}`} />
+                    <span className="text-xs text-slate-300">{item}</span>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+
+            <motion.div
+              className="absolute left-0 top-2 w-[11rem] rounded-xl border border-white/12 bg-white/[0.92] p-3 shadow-[0_20px_45px_rgba(0,0,0,0.22)] backdrop-blur lg:left-[7%] lg:top-5 lg:w-[15rem]"
+              style={{ x: chaosX, y: chaosY }}
+            >
+              <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[#0B1F3A]">
+                Input chaos
+              </p>
+              <div className="mt-2 space-y-1">
+                {["Excel", "Messages", "Docs"].map((item) => (
+                  <div key={item} className="rounded-md border border-[#0B1F3A]/10 bg-[#F7F3EA] px-2 py-1 text-xs font-medium text-[#0B1F3A]">
+                    {item}
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+
+            <motion.div
+              className="absolute right-0 top-[2.7rem] w-[10.5rem] rounded-xl border border-[#C8A96A]/28 bg-[#08192E]/92 p-3 text-white shadow-[0_20px_50px_rgba(0,0,0,0.32)] backdrop-blur lg:right-[7%] lg:top-10 lg:w-[16rem]"
+              style={{ x: workflowX, y: workflowY }}
+            >
+              <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[#C8A96A]">
+                Workflow engine
+              </p>
+              <div className="mt-2 flex flex-wrap gap-1">
+                {["Lead", "Quote", "Sign", "Deliver"].map((item, index) => (
+                  <span
+                    key={item}
+                    className={`rounded-sm border px-1.5 py-1 text-[10px] ${
+                      index < 3
+                        ? "border-[#C8A96A]/35 bg-[#C8A96A]/14 text-[#F3DEAA]"
+                        : "border-white/12 text-slate-400"
+                    }`}
+                  >
+                    {item}
+                  </span>
+                ))}
+              </div>
+            </motion.div>
+
+            <motion.div
+              className="absolute inset-x-5 bottom-8 rounded-xl border border-white/12 bg-white/[0.92] p-3 shadow-[0_22px_50px_rgba(0,0,0,0.24)] backdrop-blur lg:inset-x-[22%] lg:bottom-4"
+              style={{ y: portalY }}
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[#0B1F3A]">
+                    Client portal
+                  </p>
+                  <p className="mt-1 text-xs leading-5 text-slate-600">
+                    Approvals, OTP signatures, document status.
+                  </p>
+                </div>
+                <div className="rounded-md border border-[#C8A96A]/35 bg-[#C8A96A]/14 px-2 py-1 text-[10px] font-semibold text-[#0B1F3A]">
+                  OTP
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function MobileShowcaseStepList() {
+  return (
+    <div className="mt-4 grid gap-3 lg:grid-cols-5">
+      {SHOWCASE_BLOCKS.map((block) => (
+        <div
+          key={block.step}
+          className="rounded-lg border border-[#0B1F3A]/10 bg-white/82 px-4 py-3 shadow-[0_10px_24px_rgba(11,31,58,0.05)] lg:min-h-32"
+        >
+          <div className="flex items-center gap-3 lg:flex-col lg:items-start">
+            <span className="grid size-8 shrink-0 place-items-center rounded-full border border-[#C8A96A]/45 bg-[#C8A96A]/12 text-sm font-semibold text-[#0B1F3A]">
+              {block.step}
+            </span>
+            <h3 className="text-base font-semibold leading-tight text-[#0B1F3A] lg:text-lg">
+              {block.title}
+            </h3>
+            <p className="ml-auto max-w-[11rem] text-right text-sm leading-5 text-slate-500 lg:ml-0 lg:max-w-none lg:text-left lg:text-base lg:leading-6">
+              {block.text}
+            </p>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function MobileShowcaseCarousel({ reduceMotion }: { reduceMotion: boolean }) {
   const [step, setStep] = useState(0);
+  const [direction, setDirection] = useState(1);
   const block = SHOWCASE_BLOCKS[step];
   const Visual = VISUALS[block.visual];
-  const goPrev = () => setStep((s) => Math.max(0, s - 1));
-  const goNext = () => setStep((s) => Math.min(STEP_COUNT - 1, s + 1));
+
+  const goToStep = (nextStep: number) => {
+    const next = Math.min(STEP_COUNT - 1, Math.max(0, nextStep));
+    if (next === step) return;
+    setDirection(next > step ? 1 : -1);
+    setStep(next);
+  };
+
+  const goPrev = () => goToStep(step - 1);
+  const goNext = () => goToStep(step + 1);
+
+  const handleDragEnd = (_: MouseEvent | TouchEvent | PointerEvent, info: { offset: { x: number } }) => {
+    const swipeDistance = info.offset.x;
+    const threshold = 48;
+
+    if (swipeDistance <= -threshold) {
+      goNext();
+    }
+
+    if (swipeDistance >= threshold) {
+      goPrev();
+    }
+  };
 
   return (
     <div className="mt-10">
-      <div className="relative">
-        <AnimatePresence initial={false}>
+      <div className="relative min-h-[30rem] overflow-hidden sm:min-h-[32rem]">
+        <AnimatePresence initial={false} mode="wait" custom={direction}>
           <motion.div
             key={step}
+            custom={direction}
             initial={
-              reduceMotion ? { opacity: 0 } : { opacity: 0, y: 14 }
+              reduceMotion ? { opacity: 0 } : { opacity: 0, x: direction * 28 }
             }
-            animate={{ opacity: 1, y: 0 }}
+            animate={{ opacity: 1, x: 0 }}
             exit={
-              reduceMotion ? { opacity: 0 } : { opacity: 0, y: -8 }
+              reduceMotion ? { opacity: 0 } : { opacity: 0, x: direction * -22 }
             }
-            transition={{ duration: 0.42, ease: CAROUSEL_EASE }}
-            className="flex flex-col gap-5"
+            drag={reduceMotion ? false : "x"}
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={0.16}
+            onDragEnd={handleDragEnd}
+            transition={{ duration: 0.32, ease: CAROUSEL_EASE }}
+            className="absolute inset-x-0 top-0 flex cursor-grab touch-pan-y select-none flex-col gap-5 active:cursor-grabbing"
           >
-            <div>
+            <div className="min-h-[10.5rem]">
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#C8A96A]">
                 Step {String(block.step).padStart(2, "0")} /{" "}
                 {String(STEP_COUNT).padStart(2, "0")}
@@ -386,7 +592,7 @@ function MobileShowcaseCarousel({ reduceMotion }: { reduceMotion: boolean }) {
                 role="tab"
                 aria-selected={active}
                 aria-label={`Go to step ${b.step}: ${b.title}`}
-                onClick={() => setStep(i)}
+                onClick={() => goToStep(i)}
                 whileTap={{ scale: 0.8 }}
                 transition={{ duration: 0.1 }}
                 className="touch-manipulation grid min-h-[28px] min-w-[16px] place-items-center"
@@ -412,8 +618,8 @@ function MobileShowcaseCarousel({ reduceMotion }: { reduceMotion: boolean }) {
           Next <span aria-hidden>→</span>
         </motion.button>
       </div>
-      <p className="mt-3 text-center text-xs text-slate-500">
-        {step + 1} / {STEP_COUNT}
+      <p key={`mobile-step-count-${block.step}`} className="mt-3 text-center text-xs text-slate-500" aria-live="polite">
+        {block.step} / {STEP_COUNT}
       </p>
     </div>
   );
@@ -421,228 +627,53 @@ function MobileShowcaseCarousel({ reduceMotion }: { reduceMotion: boolean }) {
 
 export function CapabilityShowcase() {
   const sectionRef = useRef<HTMLElement | null>(null);
-  const [activeStep, setActiveStep] = useState(0);
-  const [progress, setProgress] = useState(0);
-  const [isDesktop, setIsDesktop] = useState(false);
   const [reduceMotion, setReduceMotion] = useState(false);
 
   useEffect(() => {
     const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const desktopQuery = window.matchMedia("(min-width: 900px)");
 
     const handleMotion = () => setReduceMotion(motionQuery.matches);
-    const handleDesktop = () => setIsDesktop(desktopQuery.matches);
 
     motionQuery.addEventListener("change", handleMotion);
-    desktopQuery.addEventListener("change", handleDesktop);
 
     // Defer initial sync past the commit phase so we never call setState
     // synchronously inside the effect body. Prevents iOS Safari hydration
     // races on mount.
     const id = window.requestAnimationFrame(() => {
       handleMotion();
-      handleDesktop();
     });
 
     return () => {
       window.cancelAnimationFrame(id);
       motionQuery.removeEventListener("change", handleMotion);
-      desktopQuery.removeEventListener("change", handleDesktop);
     };
   }, []);
-
-  useEffect(() => {
-    if (!isDesktop) {
-      // The mobile branch doesn't read activeStep/progress, so nothing to track.
-      return;
-    }
-
-    const node = sectionRef.current;
-    if (!node) return;
-
-    let frame = 0;
-    const compute = () => {
-      frame = 0;
-      const rect = node.getBoundingClientRect();
-      const vh = window.innerHeight;
-      // Section is 500vh; sticky frame is 100vh.
-      // Scrollable distance inside section = rect.height - vh.
-      const scrollable = rect.height - vh;
-      if (scrollable <= 0) {
-        setActiveStep(0);
-        setProgress(0);
-        return;
-      }
-      const traveled = Math.min(Math.max(-rect.top, 0), scrollable);
-      const p = traveled / scrollable;
-      setProgress(p);
-      const idx = Math.min(STEP_COUNT - 1, Math.floor(p * STEP_COUNT));
-      setActiveStep(idx);
-    };
-
-    const onScroll = () => {
-      if (frame) return;
-      frame = window.requestAnimationFrame(compute);
-    };
-
-    compute();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", compute);
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", compute);
-      if (frame) window.cancelAnimationFrame(frame);
-    };
-  }, [isDesktop]);
-
-  const useSticky = isDesktop && !reduceMotion;
-  const active = SHOWCASE_BLOCKS[activeStep];
 
   return (
     <section
       ref={sectionRef}
       className="relative border-y border-[#0B1F3A]/10 bg-[linear-gradient(180deg,#fffdf8_0%,#eef2f7_100%)]"
-      style={useSticky ? { height: `${STEP_COUNT * 100}vh` } : undefined}
       aria-labelledby="capability-showcase-heading"
     >
-      {/* Mobile / reduced-motion: step carousel */}
-      {!useSticky && (
-        <Container className="py-14 sm:py-16">
-          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#C8A96A]">
-            How it comes together
-          </p>
-          <h2
-            id="capability-showcase-heading"
-            className="font-display mt-3 max-w-3xl text-3xl font-semibold text-[#0B1F3A] sm:text-4xl"
-          >
-            From chaos to a system that fits
-          </h2>
-          <p className="mt-3 max-w-2xl text-sm leading-relaxed text-slate-600 sm:text-base">
-            Watch scattered tools become one structured operating system.
-          </p>
-          <MobileShowcaseCarousel reduceMotion={reduceMotion} />
-        </Container>
-      )}
-
-      {/* Desktop: sticky scroll storytelling */}
-      {useSticky && (
-        <div className="sticky top-0 h-screen w-full overflow-hidden">
-          {/* Subtle parallax background glow that drifts as the user scrolls */}
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-0"
-            style={{
-              background: `radial-gradient(40rem 28rem at ${20 + progress * 60}% ${30 + progress * 20}%, rgba(200,169,106,0.13), transparent 60%), radial-gradient(34rem 26rem at ${80 - progress * 40}% ${70 - progress * 20}%, rgba(11,31,58,0.12), transparent 60%)`,
-              transition: "background 600ms ease",
-            }}
-          />
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-0 opacity-[0.5] [background-image:linear-gradient(rgba(11,31,58,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(11,31,58,0.05)_1px,transparent_1px)] [background-size:44px_44px]"
-          />
-
-          <Container className="relative grid h-full items-center gap-10 lg:grid-cols-[0.95fr_1.05fr]">
-            {/* Text panel */}
-            <div className="max-w-xl">
-              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#C8A96A]">
-                How it comes together
-              </p>
-              <h2
-                id="capability-showcase-heading"
-                className="font-display mt-3 text-4xl font-semibold leading-[1.05] text-[#0B1F3A] sm:text-5xl"
-              >
-                From chaos to a system that fits
-              </h2>
-              <p className="mt-3 max-w-md text-sm leading-relaxed text-slate-600 sm:text-base">
-                Watch scattered tools become one structured operating system.
-              </p>
-
-              <div className="mt-9">
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#C8A96A]">
-                  Step {String(active.step).padStart(2, "0")} /{" "}
-                  {String(STEP_COUNT).padStart(2, "0")}
-                </p>
-                <div className="relative mt-3 grid">
-                  {SHOWCASE_BLOCKS.map((block, i) => (
-                    <div
-                      key={block.step}
-                      aria-hidden={i !== activeStep}
-                      className="col-start-1 row-start-1 max-w-md transition-[opacity,transform] duration-500 ease-out"
-                      style={{
-                        opacity: i === activeStep ? 1 : 0,
-                        transform:
-                          i === activeStep
-                            ? "translateY(0)"
-                            : i < activeStep
-                              ? "translateY(-12px)"
-                              : "translateY(12px)",
-                        pointerEvents: i === activeStep ? "auto" : "none",
-                      }}
-                    >
-                      <h3 className="font-display text-3xl font-semibold leading-tight text-[#0B1F3A] sm:text-[2.25rem]">
-                        {block.title}
-                      </h3>
-                      <p className="mt-4 text-base leading-relaxed text-slate-600">
-                        {block.text}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Progress indicators */}
-              <div className="mt-10 flex items-center gap-3">
-                {SHOWCASE_BLOCKS.map((block, i) => (
-                  <div
-                    key={block.step}
-                    className="relative h-[3px] w-10 overflow-hidden rounded-full bg-[#0B1F3A]/12"
-                  >
-                    <span
-                      className="absolute inset-y-0 left-0 rounded-full bg-[#C8A96A] transition-[width] duration-500 ease-out"
-                      style={{
-                        width:
-                          i < activeStep
-                            ? "100%"
-                            : i === activeStep
-                              ? "100%"
-                              : "0%",
-                      }}
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Visual panel */}
-            <div className="mx-auto w-full max-w-[720px]">
-              <div className="relative grid w-full" style={{ maxHeight: "70vh" }}>
-                {SHOWCASE_BLOCKS.map((block, i) => {
-                  const Visual = VISUALS[block.visual];
-                  const isActive = i === activeStep;
-                  return (
-                    <div
-                      key={block.step}
-                      aria-hidden={!isActive}
-                      className="col-start-1 row-start-1 transition-[opacity,transform] duration-500 ease-out"
-                      style={{
-                        opacity: isActive ? 1 : 0,
-                        transform: isActive
-                          ? "translateY(0) scale(1)"
-                          : i < activeStep
-                            ? "translateY(-14px) scale(0.985)"
-                            : "translateY(14px) scale(0.985)",
-                        pointerEvents: isActive ? "auto" : "none",
-                      }}
-                    >
-                      <Visual />
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </Container>
-        </div>
-      )}
+      <Container className="py-8 sm:py-14">
+        <h2
+          id="capability-showcase-heading"
+          className="font-display max-w-3xl text-3xl font-semibold leading-tight text-[#0B1F3A] sm:text-4xl lg:text-5xl"
+        >
+          From messy to clear
+        </h2>
+        <p className="mt-3 max-w-2xl text-lg leading-8 text-slate-600 lg:text-xl lg:leading-9">
+          A simple example of how scattered work becomes one system.
+        </p>
+        {reduceMotion ? (
+          <MobileShowcaseCarousel reduceMotion />
+        ) : (
+          <>
+            <MobileParallaxShowcase />
+            <MobileShowcaseStepList />
+          </>
+        )}
+      </Container>
     </section>
   );
 }

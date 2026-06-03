@@ -1,15 +1,15 @@
 import type { MetadataRoute } from "next";
+import { defaultLocale, locales, localizedUrl, publicRoutes } from "@/lib/seo";
 
-const siteUrl =
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://brandlabelagency.com";
-
-const routes = ["", "/services", "/case-study", "/contact"];
+const lastModified = new Date();
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  return routes.map((route) => ({
-    url: `${siteUrl}${route}`,
-    lastModified: new Date(),
-    changeFrequency: route === "" ? "weekly" : "monthly",
-    priority: route === "" ? 1 : 0.8,
-  }));
+  return publicRoutes.flatMap((route) =>
+    locales.map((locale) => ({
+      url: localizedUrl(route, locale),
+      lastModified,
+      changeFrequency: route === "" ? "weekly" : "monthly",
+      priority: locale === defaultLocale && route === "" ? 1 : 0.8,
+    })),
+  );
 }

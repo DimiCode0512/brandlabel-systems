@@ -3,6 +3,12 @@
 import { Container } from "@/components/Container";
 import { useIsDesktop } from "@/hooks/useIsDesktop";
 import {
+  getLanguageFromPathname,
+  localizedPathname,
+  useLanguage,
+} from "@/lib/i18n";
+import { usePathname } from "next/navigation";
+import {
   AnimatePresence,
   motion,
   useMotionValue,
@@ -13,6 +19,7 @@ import {
   type Variants,
 } from "framer-motion";
 import Link from "next/link";
+import { LocalizedLink } from "@/components/LocalizedLink";
 import {
   useEffect,
   useMemo,
@@ -277,15 +284,9 @@ function ServicesHero() {
             show: { transition: { staggerChildren: 0.12, delayChildren: 0.05 } },
           } : undefined}
         >
-          <motion.p
-            variants={isDesktopHero ? fadeUp : undefined}
-            className="text-xs font-semibold uppercase tracking-[0.32em] text-[#C8A96A]"
-          >
-            Services
-          </motion.p>
           <motion.h1
             variants={isDesktopHero ? fadeUp : undefined}
-            className="font-display mt-6 max-w-[20ch] text-balance text-5xl font-semibold leading-[0.98] text-[#0B1F3A] sm:text-6xl lg:text-[4.75rem]"
+            className="font-display max-w-[20ch] text-balance text-5xl font-semibold leading-[0.98] text-[#0B1F3A] sm:text-6xl lg:text-[4.75rem]"
           >
             Custom systems, web apps, and websites built around your business.
           </motion.h1>
@@ -304,7 +305,7 @@ function ServicesHero() {
           </motion.div>
           <motion.p
             variants={isDesktopHero ? fadeUp : undefined}
-            className="mt-7 text-xs uppercase tracking-[0.24em] text-[#0B1F3A]/55"
+            className="mt-7 text-sm font-semibold uppercase tracking-[0.18em] text-[#0B1F3A] sm:text-base"
           >
             Custom-built · Designed in-house · Maintained for the long run
           </motion.p>
@@ -486,15 +487,18 @@ function PrimaryCTA({
   variant: "dark" | "ghost";
   children: ReactNode;
 }) {
+  const { language } = useLanguage();
+  const pathname = usePathname();
+  const activeLanguage = getLanguageFromPathname(pathname) ?? language;
   const base =
-    "group relative inline-flex min-h-12 touch-manipulation items-center justify-center overflow-hidden rounded-sm px-6 text-sm font-semibold transition-[transform,box-shadow,border-color,background-color] duration-300 ease-out hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C8A96A]";
+    "group relative inline-flex min-h-12 touch-manipulation items-center justify-center overflow-hidden rounded-sm px-6 text-base font-semibold transition-[transform,box-shadow,border-color,background-color] duration-300 ease-out hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C8A96A] sm:text-lg";
   const styles =
     variant === "dark"
       ? "bg-[#C8A96A] text-[#0B1F3A] shadow-[0_16px_38px_rgba(200,169,106,0.28)] hover:bg-[#D6BA7D]"
       : "border border-[#0B1F3A]/15 bg-white/65 text-[#0B1F3A] hover:border-[#C8A96A]/55 hover:bg-white hover:shadow-[0_18px_44px_rgba(11,31,58,0.12)]";
   return (
     <MotionLink
-      href={href}
+      href={localizedPathname(href, activeLanguage)}
       whileTap={{ scale: 0.97, opacity: 0.88 }}
       transition={{ duration: 0.12 }}
       className={`${base} ${styles}`}
@@ -526,6 +530,9 @@ type Service = {
   tagline: string;
   description: string;
   highlights: string[];
+  how: string;
+  bestFor: string;
+  deliverables: string;
 };
 
 const SERVICES: Service[] = [
@@ -534,67 +541,90 @@ const SERVICES: Service[] = [
     number: "01",
     title: "Custom Systems",
     tagline: "Operational command center",
-    description:
-      "A private operating system for your business — projects, clients, approvals, scheduling, and signatures coordinated in one quiet, structured place.",
+    description: "One system for projects, clients, documents, schedules, and approvals.",
     highlights: [
       "Centralized projects, clients, tasks",
       "Approval gates and audit trails",
       "Scheduling, signatures, documents",
     ],
+    how: "We map the workflow, design the key screens, then build the operating dashboard.",
+    bestFor: "Teams managing work across too many tools.",
+    deliverables: "Dashboard, client records, task flow, documents, permissions, and launch support.",
   },
   {
     key: "web-apps",
     number: "02",
     title: "Web Apps",
     tagline: "Modern client portals & internal apps",
-    description:
-      "Focused web applications shaped around how your users actually work — clean onboarding, secure access, and live collaboration without the noise.",
+    description: "Client portals and internal apps for clear daily actions.",
     highlights: [
       "Onboarding & secure sign-in",
       "Role-based dashboards",
       "Live updates and collaboration",
     ],
+    how: "We define user journeys, then build the portal, forms, dashboard, and access flow.",
+    bestFor: "Portals, booking tools, quote approvals, and internal apps.",
+    deliverables: "Responsive app, portal screens, forms, notifications, and handover notes.",
   },
   {
     key: "websites",
     number: "03",
     title: "Websites",
     tagline: "Premium, conversion-focused presence",
-    description:
-      "Editorial websites that explain what you do clearly, build trust at first glance, and turn the right visitors into qualified conversations.",
+    description: "Premium websites that explain your offer and support qualified enquiries.",
     highlights: [
       "Editorial layouts and tone",
       "Lead capture and analytics",
       "Brand-grade content systems",
     ],
+    how: "We clarify the offer, structure the pages, design the interface, and build the site.",
+    bestFor: "Service businesses that need clearer positioning and stronger trust.",
+    deliverables: "Pages, responsive design, SEO metadata, contact flow, analytics, and launch checklist.",
   },
   {
     key: "automation",
     number: "04",
     title: "Automation & Workflow Tools",
     tagline: "Workflow orchestration",
-    description:
-      "Connect the systems your team already uses, route work through the right hands, and let automations carry the repetitive load — quietly, in the background.",
+    description: "Automations for repetitive work, reminders, approvals, and handoffs.",
     highlights: [
       "Connected systems and triggers",
       "Routing and approval logic",
       "Sync states across tools",
     ],
+    how: "We define triggers, connect tools, and test the workflow before launch.",
+    bestFor: "Follow-ups, document routing, reminders, approvals, handoffs, email flows, and status updates.",
+    deliverables: "Workflow map, automation rules, connected tools, checks, and operating guide.",
   },
   {
     key: "maintenance",
     number: "05",
     title: "Maintenance & Improvements",
     tagline: "Care, performance, evolution",
-    description:
-      "Ongoing improvements after launch — uptime monitoring, performance tuning, security updates, and steady evolution as your business grows.",
+    description: "Ongoing care so your system stays fast, secure, and useful.",
     highlights: [
       "Uptime & performance",
       "Security & dependency updates",
       "Issue tracking and roadmap",
     ],
+    how: "We monitor, fix issues, improve slow points, and add small features.",
+    bestFor: "Businesses that want their system to stay useful after launch.",
+    deliverables: "Checks, refinements, bug fixes, performance updates, and improvement planning.",
   },
 ];
+
+function DetailBlock({ title, children }: { title: string; children: ReactNode }) {
+  return (
+    <div className="rounded-lg border border-[#0B1F3A]/10 bg-white/88 p-5 shadow-[0_12px_28px_rgba(11,31,58,0.06)]">
+      <p className="text-base font-semibold uppercase tracking-[0.12em] text-[#087E74]">
+        {title}
+      </p>
+      <p className="mt-3 text-xl leading-9 text-slate-600">
+        {children}
+      </p>
+    </div>
+  );
+}
 
 function sceneFor(key: ServiceKey) {
   if (key === "custom-systems") return <SceneCustomSystems />;
@@ -633,7 +663,7 @@ function MobileAccordion() {
                 <p className="font-display text-xl font-semibold leading-tight text-white">
                   {s.title}
                 </p>
-                <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.22em] text-white/55">
+                <p className="mt-1.5 text-sm font-semibold uppercase tracking-[0.16em] text-white/62">
                   {s.tagline}
                 </p>
               </div>
@@ -679,22 +709,33 @@ function MobileAccordion() {
                   style={{ overflow: "hidden" }}
                 >
                   <div className="px-5 pb-6">
-                    <p className="text-sm leading-7 text-white/82">
+                    <p className="text-xl leading-9 text-white/88">
                       {s.description}
                     </p>
                     <ul className="mt-4 grid gap-2">
                       {s.highlights.map((h) => (
                         <li
                           key={h}
-                          className="flex items-start gap-2 rounded-sm border border-white/12 bg-white/[0.05] px-3 py-2 text-[12px] tracking-wide text-white/82"
+                          className="flex items-start gap-2 rounded-sm border border-white/12 bg-white/[0.05] px-3 py-2.5 text-lg leading-7 tracking-wide text-white/88"
                         >
                           <span className="mt-1 size-1 shrink-0 rounded-full bg-[#C8A96A]" />
                           <span>{h}</span>
                         </li>
                       ))}
                     </ul>
+                    <div className="mt-5 grid gap-3">
+                      <DetailBlock title="How we build it">{s.how}</DetailBlock>
+                      <DetailBlock title="Best for">{s.bestFor}</DetailBlock>
+                      <DetailBlock title="Typical deliverables">{s.deliverables}</DetailBlock>
+                    </div>
                     {/* Scene visual — softer surface so layers read clearly on phone */}
-                    <div className="relative mt-5 aspect-[16/10] overflow-hidden rounded-xl border border-white/12 bg-[linear-gradient(165deg,rgba(20,40,72,0.7),rgba(8,18,36,0.78))] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
+                    <div
+                      className={`relative mt-5 aspect-[16/10] overflow-hidden rounded-xl border shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] ${
+                        s.key === "web-apps" || s.key === "automation"
+                          ? "border-white/12 bg-[linear-gradient(165deg,rgba(20,40,72,0.7),rgba(8,18,36,0.78))]"
+                          : "border-[#0B1F3A]/10 bg-[linear-gradient(160deg,#f9fcfb_0%,#fff9ec_100%)]"
+                      }`}
+                    >
                       <div
                         aria-hidden
                         className="pointer-events-none absolute inset-0 [background-image:linear-gradient(rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.05)_1px,transparent_1px)] [background-size:32px_32px] opacity-55"
@@ -731,15 +772,15 @@ function ServicesShowcase() {
   );
 
   return (
-    <section className="relative bg-[linear-gradient(180deg,#0b1f3a_0%,#091a31_45%,#050d1c_100%)] py-24 text-white sm:py-28">
+    <section className="relative bg-[linear-gradient(180deg,#f8fbfa_0%,#fffdf8_48%,#eef7f6_100%)] py-24 text-[#0B1F3A] sm:py-28">
       {/* Soft warmth */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_18%_0%,rgba(200,169,106,0.18),transparent_55%),radial-gradient(ellipse_at_85%_100%,rgba(60,90,140,0.22),transparent_55%)]"
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_18%_0%,rgba(43,179,163,0.18),transparent_55%),radial-gradient(ellipse_at_85%_100%,rgba(200,169,106,0.2),transparent_55%)]"
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-[0.45] [background-image:linear-gradient(rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.04)_1px,transparent_1px)] [background-size:60px_60px]"
+        className="pointer-events-none absolute inset-0 opacity-[0.55] [background-image:linear-gradient(rgba(11,31,58,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(11,31,58,0.05)_1px,transparent_1px)] [background-size:60px_60px]"
       />
 
       <Container className="relative">
@@ -749,7 +790,7 @@ function ServicesShowcase() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-15%" }}
             transition={{ duration: 0.7, ease: EASE }}
-            className="text-xs font-semibold uppercase tracking-[0.32em] text-[#C8A96A]"
+            className="text-lg font-semibold uppercase tracking-[0.18em] text-[#0B1F3A] sm:text-xl"
           >
             What we build
           </motion.p>
@@ -779,7 +820,7 @@ function ServicesShowcase() {
                       onClick={() =>
                         setActive((k) => (k === s.key ? null : s.key))
                       }
-                      className="group relative w-full touch-manipulation border-t border-white/8 py-6 text-left transition-[background-color,padding,border-color,box-shadow,transform] duration-500 ease-out hover:-translate-y-0.5 hover:border-[#C8A96A]/35 hover:bg-white/[0.04] hover:shadow-[0_18px_44px_rgba(200,169,106,0.16)] active:bg-white/[0.04] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#C8A96A]"
+                      className="group relative w-full touch-manipulation border-t border-[#0B1F3A]/10 py-6 text-left transition-[background-color,padding,border-color,box-shadow,transform] duration-500 ease-out hover:-translate-y-0.5 hover:border-[#2BB3A3]/35 hover:bg-white/70 hover:shadow-[0_18px_44px_rgba(11,31,58,0.09)] active:bg-white/70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#2BB3A3]"
                       style={isActive ? { paddingLeft: 18 } : undefined}
                     >
                       {/* Gold indicator bar */}
@@ -791,30 +832,30 @@ function ServicesShowcase() {
                           width: isActive ? 4 : 0,
                           opacity: isActive ? 1 : 0,
                           boxShadow: isActive
-                            ? "0 0 22px rgba(200,169,106,0.65)"
+                            ? "0 0 22px rgba(43,179,163,0.45)"
                             : "0 0 0 rgba(200,169,106,0)",
                         }}
                         transition={{ duration: 0.45, ease: EASE }}
                       />
                       <div className="flex items-baseline gap-5">
                         <span
-                          className={`font-display text-sm transition-colors duration-500 ${
-                            isActive ? "text-[#C8A96A]" : "text-white/35"
+                          className={`font-display text-base transition-colors duration-500 ${
+                            isActive ? "text-[#087E74]" : "text-[#0B1F3A]/35"
                           }`}
                         >
                           {s.number}
                         </span>
                         <span
-                          className={`font-display text-2xl font-semibold tracking-tight transition-[color,transform] duration-500 ease-out group-hover:translate-x-0.5 sm:text-[1.7rem] ${
-                            isActive ? "text-white" : "text-white/45"
+                          className={`font-display text-[1.7rem] font-semibold tracking-tight transition-[color,transform] duration-500 ease-out group-hover:translate-x-0.5 sm:text-3xl ${
+                            isActive ? "text-[#0B1F3A]" : "text-[#0B1F3A]/45"
                           }`}
                         >
                           {s.title}
                         </span>
                       </div>
                       <p
-                        className={`mt-1.5 pl-9 text-xs uppercase tracking-[0.22em] transition-colors duration-500 ${
-                          isActive ? "text-[#C8A96A]/85" : "text-white/30"
+                        className={`mt-2 pl-10 text-sm font-semibold uppercase tracking-[0.16em] transition-colors duration-500 ${
+                          isActive ? "text-[#087E74]" : "text-[#0B1F3A]/35"
                         }`}
                       >
                         {s.tagline}
@@ -823,16 +864,16 @@ function ServicesShowcase() {
                   </li>
                 );
               })}
-              <li className="border-t border-white/8" aria-hidden />
+              <li className="border-t border-[#0B1F3A]/10" aria-hidden />
             </ul>
           </div>
 
           {/* Right — cinematic stage */}
           <div className="relative">
-            <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-[linear-gradient(160deg,rgba(20,40,72,0.85),rgba(7,17,32,0.92))] p-6 shadow-[0_50px_140px_rgba(0,0,0,0.45)] sm:p-8">
+            <div className="relative overflow-hidden rounded-3xl border border-[#0B1F3A]/10 bg-white/86 p-6 shadow-[0_34px_90px_rgba(11,31,58,0.12)] sm:p-8">
               {/* Decorative gold rule */}
-              <div className="pointer-events-none absolute left-8 right-8 top-0 h-px bg-gradient-to-r from-transparent via-[#C8A96A]/55 to-transparent" />
-              <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_75%_-10%,rgba(200,169,106,0.18),transparent_60%)]" />
+              <div className="pointer-events-none absolute left-8 right-8 top-0 h-px bg-gradient-to-r from-transparent via-[#2BB3A3]/55 to-transparent" />
+              <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_75%_-10%,rgba(43,179,163,0.14),transparent_60%)]" />
 
               <div className="relative">
                 <AnimatePresence mode="wait">
@@ -845,17 +886,17 @@ function ServicesShowcase() {
                       exit="exit"
                     >
                       <div className="flex items-center gap-3">
-                        <span className="font-display text-base text-[#C8A96A]">
+                        <span className="font-display text-lg text-[#C8A96A]">
                           {activeService.number}
                         </span>
-                        <span className="text-[11px] uppercase tracking-[0.32em] text-white/55">
+                        <span className="text-sm font-semibold uppercase tracking-[0.2em] text-[#0B1F3A]/60">
                           {activeService.tagline}
                         </span>
                       </div>
                       <h3 className="font-display mt-3 text-balance text-4xl font-semibold leading-[1.04] sm:text-[2.75rem] lg:text-[3rem]">
                         {activeService.title}
                       </h3>
-                      <p className="mt-4 max-w-xl text-base leading-8 text-white/82 sm:text-lg">
+                      <p className="mt-5 max-w-2xl text-2xl leading-10 text-slate-600">
                         {activeService.description}
                       </p>
 
@@ -863,12 +904,17 @@ function ServicesShowcase() {
                         {activeService.highlights.map((h) => (
                           <li
                             key={h}
-                            className="rounded-sm border border-white/12 bg-white/[0.05] px-3 py-2 text-[12px] tracking-wide text-white/82"
+                            className="rounded-sm border border-[#0B1F3A]/10 bg-[#F7FBFA] px-4 py-3 text-lg leading-7 tracking-wide text-slate-700"
                           >
                             {h}
                           </li>
                         ))}
                       </ul>
+                      <div className="mt-6 grid gap-3 lg:grid-cols-3">
+                        <DetailBlock title="How we build it">{activeService.how}</DetailBlock>
+                        <DetailBlock title="Best for">{activeService.bestFor}</DetailBlock>
+                        <DetailBlock title="Typical deliverables">{activeService.deliverables}</DetailBlock>
+                      </div>
                     </motion.div>
                   ) : (
                     <motion.div
@@ -878,13 +924,13 @@ function ServicesShowcase() {
                       exit={{ opacity: 0, y: -8 }}
                       transition={{ duration: 0.4, ease: EASE }}
                     >
-                      <p className="text-[11px] uppercase tracking-[0.32em] text-[#C8A96A]">
+                      <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#C8A96A]">
                         Browse capabilities
                       </p>
                       <h3 className="font-display mt-3 text-balance text-4xl font-semibold leading-[1.04] sm:text-[2.75rem] lg:text-[3rem]">
                         Choose a capability to explore.
                       </h3>
-                      <p className="mt-4 max-w-xl text-base leading-8 text-white/72 sm:text-lg">
+                      <p className="mt-5 max-w-2xl text-xl leading-9 text-slate-600">
                         Click any of the five disciplines on the left to see how it
                         fits into a complete operating layer for your business.
                       </p>
@@ -893,7 +939,13 @@ function ServicesShowcase() {
                 </AnimatePresence>
 
                 {/* Visual stage */}
-                <div className="relative mt-8 aspect-[16/10] overflow-hidden rounded-2xl border border-white/10 bg-[linear-gradient(165deg,rgba(11,31,58,0.85),rgba(5,12,24,0.95))] shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
+                <div
+                  className={`relative mt-8 aspect-[16/10] overflow-hidden rounded-2xl border shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] ${
+                    activeService?.key === "web-apps" || activeService?.key === "automation"
+                      ? "border-white/10 bg-[linear-gradient(165deg,rgba(11,31,58,0.85),rgba(5,12,24,0.95))]"
+                      : "border-[#0B1F3A]/10 bg-[linear-gradient(160deg,#f9fcfb_0%,#fff9ec_100%)]"
+                  }`}
+                >
                   <div
                     aria-hidden
                     className="pointer-events-none absolute inset-0 [background-image:linear-gradient(rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.04)_1px,transparent_1px)] [background-size:32px_32px] opacity-60"
@@ -974,19 +1026,19 @@ function SceneLayer({
 function SceneCustomSystems() {
   return (
     <>
-      <SceneLayer className="left-[5%] top-[8%] w-[44%] rounded-xl border border-white/12 bg-[rgba(11,31,58,0.7)] p-3 shadow-2xl backdrop-blur-md">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#C8A96A]">
+      <SceneLayer className="left-[5%] top-[8%] w-[44%] rounded-xl border border-[#0B1F3A]/10 bg-white/92 p-3 text-[#0B1F3A] shadow-2xl backdrop-blur-md">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#087E74]">
           Approvals
         </p>
         <ul className="mt-2.5 space-y-1.5">
           {["Quote · Meridian", "PO · Site 04", "Contract · v3"].map((row, i) => (
             <li
               key={row}
-              className="flex items-center justify-between rounded border border-white/10 bg-white/[0.04] px-2 py-1 text-[10px] text-slate-100"
+              className="flex items-center justify-between rounded border border-[#0B1F3A]/10 bg-[#F7FBFA] px-2 py-1 text-[10px] text-[#0B1F3A]"
             >
               <span className="truncate">{row}</span>
               <span
-                className={`text-[8px] uppercase tracking-[0.14em] ${i === 0 ? "text-[#F3DEAA]" : "text-slate-400"}`}
+                className={`text-[8px] uppercase tracking-[0.14em] ${i === 0 ? "text-[#8F6B24]" : "text-slate-500"}`}
               >
                 {i === 0 ? "Awaiting" : i === 1 ? "Approved" : "Review"}
               </span>
@@ -994,32 +1046,32 @@ function SceneCustomSystems() {
           ))}
         </ul>
       </SceneLayer>
-      <SceneLayer className="right-[5%] top-[14%] w-[42%] rounded-xl border border-white/12 bg-[rgba(11,31,58,0.65)] p-3 shadow-2xl backdrop-blur-md">
+      <SceneLayer className="right-[5%] top-[14%] w-[42%] rounded-xl border border-[#0B1F3A]/10 bg-white/92 p-3 text-[#0B1F3A] shadow-2xl backdrop-blur-md">
         <div className="flex items-center justify-between">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#C8A96A]">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#087E74]">
             Schedule
           </p>
-          <span className="text-[9px] text-slate-400">Wed</span>
+          <span className="text-[9px] text-slate-500">Wed</span>
         </div>
         <div className="mt-2 grid grid-cols-7 gap-0.5">
           {Array.from({ length: 21 }).map((_, i) => (
             <div
               key={i}
-              className={`h-3 rounded-sm ${i === 13 ? "bg-[#C8A96A]" : [3, 7, 10, 16].includes(i) ? "bg-white/35" : "bg-white/[0.06]"}`}
+              className={`h-3 rounded-sm ${i === 13 ? "bg-[#C8A96A]" : [3, 7, 10, 16].includes(i) ? "bg-[#2BB3A3]/40" : "bg-[#0B1F3A]/8"}`}
             />
           ))}
         </div>
-        <p className="mt-2 text-[9px] text-slate-300">14:00 · Site visit</p>
+        <p className="mt-2 text-[9px] text-slate-600">14:00 · Site visit</p>
       </SceneLayer>
-      <SceneLayer className="bottom-[8%] left-[14%] w-[60%] rounded-xl border border-[#C8A96A]/30 bg-[rgba(200,169,106,0.08)] p-3 shadow-2xl backdrop-blur-md">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#C8A96A]">
+      <SceneLayer className="bottom-[8%] left-[14%] w-[60%] rounded-xl border border-[#C8A96A]/30 bg-[#fff8e7]/90 p-3 text-[#0B1F3A] shadow-2xl backdrop-blur-md">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#8F6B24]">
           Workflow
         </p>
         <div className="mt-2 flex items-center gap-1.5">
           {["Lead", "Quote", "Sign", "Deliver", "Archive"].map((s, i) => (
             <div key={s} className="flex items-center gap-1">
               <span
-                className={`rounded px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-[0.14em] ${i <= 2 ? "bg-[#C8A96A]/22 text-[#F3DEAA]" : "bg-white/[0.05] text-slate-400"}`}
+                className={`rounded px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-[0.14em] ${i <= 2 ? "bg-[#C8A96A]/25 text-[#0B1F3A]" : "bg-white/70 text-slate-500"}`}
               >
                 {s}
               </span>
@@ -1035,45 +1087,74 @@ function SceneCustomSystems() {
 function SceneWebApps() {
   return (
     <>
-      <SceneLayer className="left-[6%] top-[8%] w-[55%] rounded-xl border border-white/12 bg-[rgba(11,31,58,0.7)] p-0 shadow-2xl backdrop-blur-md overflow-hidden">
-        <div className="flex items-center gap-1.5 border-b border-white/10 px-3 py-2">
+      <SceneLayer className="left-[5%] top-[7%] w-[62%] overflow-hidden rounded-xl border border-white/14 bg-[linear-gradient(145deg,rgba(11,31,58,0.92),rgba(5,15,29,0.94))] p-0 shadow-2xl backdrop-blur-md">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_78%_8%,rgba(200,169,106,0.22),transparent_32%)]" />
+        <div className="relative z-10 flex items-center gap-1.5 border-b border-white/10 px-3 py-2">
           <span className="size-1.5 rounded-full bg-white/30" />
           <span className="size-1.5 rounded-full bg-white/30" />
           <span className="size-1.5 rounded-full bg-white/30" />
           <div className="ml-2 flex h-4 flex-1 items-center rounded-sm bg-white/[0.07] px-2 text-[8px] text-slate-400">
-            portal.example.app / inbox
+            portal.brandlabel.app / workspace
           </div>
         </div>
-        <div className="grid grid-cols-[0.32fr_0.68fr] gap-2 p-3">
+        <div className="relative z-10 grid grid-cols-[0.3fr_0.7fr] gap-2 p-3">
           <div className="space-y-1">
-            {["Inbox", "Projects", "Files", "Billing"].map((it, i) => (
+            {["Home", "Clients", "Documents", "Team"].map((it, i) => (
               <div
                 key={it}
-                className={`rounded px-1.5 py-1 text-[9px] ${i === 0 ? "bg-[#C8A96A]/15 text-[#F3DEAA]" : "text-slate-400"}`}
+                className={`rounded px-1.5 py-1 text-[9px] ${i === 0 ? "border border-[#C8A96A]/30 bg-[#C8A96A]/15 text-[#F3DEAA]" : "text-slate-400"}`}
               >
                 {it}
               </div>
             ))}
           </div>
-          <div className="grid grid-cols-2 gap-1.5">
-            {[0, 1, 2, 3].map((i) => (
-              <div
-                key={i}
-                className={`rounded border p-1.5 ${i === 1 ? "border-[#C8A96A]/30 bg-[#C8A96A]/10" : "border-white/10 bg-white/[0.04]"}`}
-              >
-                <div className="h-1 w-full rounded-full bg-white/25" />
-                <div className="mt-1 h-1 w-[60%] rounded-full bg-white/15" />
+          <div className="space-y-2">
+            <div className="grid grid-cols-3 gap-1.5">
+              {[
+                ["Open tasks", "34"],
+                ["Clients", "18"],
+                ["Approvals", "7"],
+              ].map(([label, value]) => (
+                <div key={label} className="rounded border border-white/10 bg-white/[0.055] p-1.5">
+                  <p className="text-[7px] uppercase tracking-[0.16em] text-slate-400">{label}</p>
+                  <p className="text-sm font-semibold tabular-nums text-white">{value}</p>
+                </div>
+              ))}
+            </div>
+            <div className="rounded-lg border border-[#C8A96A]/30 bg-[#C8A96A]/10 p-2">
+              <div className="flex items-center justify-between">
+                <p className="text-[9px] font-semibold uppercase tracking-[0.18em] text-[#F3DEAA]">
+                  Client request
+                </p>
+                <span className="rounded bg-[#C8A96A] px-1.5 py-0.5 text-[7px] font-bold uppercase tracking-[0.12em] text-[#0B1F3A]">
+                  Ready
+                </span>
               </div>
-            ))}
+              <div className="mt-2 space-y-1">
+                <span className="block h-1.5 w-[88%] rounded-full bg-white/35" />
+                <span className="block h-1.5 w-[66%] rounded-full bg-white/18" />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-1.5">
+              {["Message thread", "Shared files"].map((item, i) => (
+                <div key={item} className="rounded border border-white/10 bg-black/20 p-1.5">
+                  <div className="flex items-center gap-1.5">
+                    <span className={`size-1.5 rounded-full ${i === 0 ? "bg-[#C8A96A]" : "bg-white/35"}`} />
+                    <p className="truncate text-[8px] font-medium text-slate-200">{item}</p>
+                  </div>
+                  <div className="mt-1 h-1 w-[70%] rounded-full bg-white/15" />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </SceneLayer>
-      <SceneLayer className="right-[6%] top-[18%] w-[36%] rounded-xl border border-white/12 bg-[rgba(11,31,58,0.7)] p-3 shadow-2xl backdrop-blur-md">
+      <SceneLayer className="right-[5%] top-[16%] w-[34%] rounded-xl border border-white/12 bg-[rgba(11,31,58,0.84)] p-3 shadow-2xl backdrop-blur-md">
         <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#C8A96A]">
-          Onboarding
+          Access flow
         </p>
         <ol className="mt-2 space-y-1.5 text-[10px] text-slate-200">
-          {["Verify email", "Connect tools", "Invite team"].map((s, i) => (
+          {["Invite client", "Verify email", "Open portal"].map((s, i) => (
             <li key={s} className="flex items-center gap-2">
               <span
                 className={`grid size-3.5 place-items-center rounded-full text-[8px] ${i < 2 ? "bg-[#C8A96A] text-[#0B1F3A]" : "border border-white/25 text-slate-400"}`}
@@ -1085,19 +1166,22 @@ function SceneWebApps() {
           ))}
         </ol>
       </SceneLayer>
-      <SceneLayer className="bottom-[6%] left-[18%] w-[56%] rounded-xl border border-white/12 bg-[rgba(11,31,58,0.7)] p-3 shadow-2xl backdrop-blur-md">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#C8A96A]">
-          Live activity
-        </p>
+      <SceneLayer className="bottom-[6%] left-[16%] w-[58%] rounded-xl border border-white/12 bg-[rgba(11,31,58,0.86)] p-3 shadow-2xl backdrop-blur-md">
+        <div className="flex items-center justify-between">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#C8A96A]">
+            Live activity
+          </p>
+          <span className="rounded-full bg-emerald-400/15 px-2 py-0.5 text-[8px] font-semibold text-emerald-200">
+            Synced
+          </span>
+        </div>
         <ul className="mt-2 space-y-1">
-          {["Maya joined", "File · Brief.pdf updated", "Comment on Project 2"].map(
-            (line) => (
-              <li key={line} className="flex items-center gap-2 text-[9px] text-slate-300">
-                <span className="size-1 rounded-full bg-[#C8A96A]" />
-                <span className="truncate">{line}</span>
-              </li>
-            ),
-          )}
+          {["Maya joined the portal", "Brief.pdf approved", "Comment added to Project Atlas"].map((line) => (
+            <li key={line} className="flex items-center gap-2 text-[9px] text-slate-300">
+              <span className="size-1 rounded-full bg-[#C8A96A]" />
+              <span className="truncate">{line}</span>
+            </li>
+          ))}
         </ul>
       </SceneLayer>
     </>
@@ -1336,25 +1420,25 @@ function SceneAutomation() {
 function SceneMaintenance() {
   return (
     <>
-      <SceneLayer className="left-[5%] top-[8%] w-[44%] rounded-xl border border-white/12 bg-[rgba(11,31,58,0.7)] p-3 shadow-2xl backdrop-blur-md">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#C8A96A]">
+      <SceneLayer className="left-[5%] top-[8%] w-[44%] rounded-xl border border-[#0B1F3A]/10 bg-white/92 p-3 text-[#0B1F3A] shadow-2xl backdrop-blur-md">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#087E74]">
           Uptime
         </p>
         <div className="mt-2 flex items-end gap-2">
-          <p className="font-display text-3xl font-semibold text-white">99.98%</p>
-          <p className="pb-1 text-[9px] text-emerald-200/85">last 90 days</p>
+          <p className="font-display text-3xl font-semibold text-[#0B1F3A]">99.98%</p>
+          <p className="pb-1 text-[9px] text-[#087E74]">last 90 days</p>
         </div>
         <div className="mt-2 flex h-2 gap-[2px]">
           {Array.from({ length: 28 }).map((_, i) => (
             <span
               key={i}
-              className={`flex-1 rounded-sm ${i === 9 ? "bg-[#C8A96A]" : "bg-emerald-400/55"}`}
+              className={`flex-1 rounded-sm ${i === 9 ? "bg-[#C8A96A]" : "bg-[#2BB3A3]/55"}`}
             />
           ))}
         </div>
       </SceneLayer>
-      <SceneLayer className="right-[5%] top-[10%] w-[44%] rounded-xl border border-white/12 bg-[rgba(11,31,58,0.7)] p-3 shadow-2xl backdrop-blur-md">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#C8A96A]">
+      <SceneLayer className="right-[5%] top-[10%] w-[44%] rounded-xl border border-[#0B1F3A]/10 bg-white/92 p-3 text-[#0B1F3A] shadow-2xl backdrop-blur-md">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#087E74]">
           Performance
         </p>
         <ul className="mt-2 space-y-1.5 text-[10px]">
@@ -1365,16 +1449,16 @@ function SceneMaintenance() {
           ].map((m) => (
             <li
               key={m.k}
-              className="flex items-center justify-between rounded border border-white/10 bg-white/[0.04] px-2 py-1"
+              className="flex items-center justify-between rounded border border-[#0B1F3A]/10 bg-[#F7FBFA] px-2 py-1"
             >
-              <span className="text-slate-300">{m.k}</span>
-              <span className="font-semibold text-white">{m.v}</span>
+              <span className="text-slate-600">{m.k}</span>
+              <span className="font-semibold text-[#0B1F3A]">{m.v}</span>
             </li>
           ))}
         </ul>
       </SceneLayer>
-      <SceneLayer className="bottom-[8%] left-[14%] w-[64%] rounded-xl border border-white/12 bg-[rgba(11,31,58,0.7)] p-3 shadow-2xl backdrop-blur-md">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#C8A96A]">
+      <SceneLayer className="bottom-[8%] left-[14%] w-[64%] rounded-xl border border-[#C8A96A]/30 bg-[#fff8e7]/90 p-3 text-[#0B1F3A] shadow-2xl backdrop-blur-md">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#8F6B24]">
           Releases
         </p>
         <ul className="mt-2 space-y-1">
@@ -1385,12 +1469,12 @@ function SceneMaintenance() {
           ].map((r) => (
             <li
               key={r.v}
-              className="flex items-center justify-between rounded border border-white/10 bg-white/[0.04] px-2 py-1 text-[10px]"
+              className="flex items-center justify-between rounded border border-[#0B1F3A]/10 bg-white/70 px-2 py-1 text-[10px]"
             >
-              <span className="font-display tabular-nums text-white">{r.v}</span>
-              <span className="text-slate-300">{r.note}</span>
+              <span className="font-display tabular-nums text-[#0B1F3A]">{r.v}</span>
+              <span className="text-slate-600">{r.note}</span>
               <span
-                className={`text-[8px] uppercase tracking-[0.16em] ${r.tag === "shipped" ? "text-emerald-200/85" : r.tag === "in QA" ? "text-[#F3DEAA]" : "text-slate-400"}`}
+                className={`text-[8px] uppercase tracking-[0.16em] ${r.tag === "shipped" ? "text-[#087E74]" : r.tag === "in QA" ? "text-[#8F6B24]" : "text-slate-500"}`}
               >
                 {r.tag}
               </span>
@@ -1518,14 +1602,14 @@ function ParallaxStatement() {
         style={{ y: isDesktop ? fgY : mobileFgY }}
         className="relative"
       >
-        <Container className="py-28 sm:py-36">
+        <Container className="py-20 sm:py-28">
           <div className="mx-auto max-w-4xl">
             <motion.p
               initial={false}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-20%" }}
               transition={{ duration: 0.7, ease: EASE }}
-              className="text-xs font-semibold uppercase tracking-[0.32em] text-[#C8A96A]"
+              className="text-base font-semibold uppercase tracking-[0.22em] text-[#F3DEAA] sm:text-lg"
             >
               The thinking behind it
             </motion.p>
@@ -1535,24 +1619,21 @@ function ParallaxStatement() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-15%" }}
               transition={{ duration: 0.95, ease: EASE }}
-              className="font-display mt-8 text-balance text-4xl font-semibold leading-[1.04] text-white sm:text-5xl lg:text-[4.25rem]"
+              className="font-display mt-6 text-balance text-4xl font-semibold leading-[1.04] text-white sm:text-5xl lg:text-[4.25rem]"
             >
               Built around how your company actually works.
             </motion.h2>
 
-            <ul className="mt-10 grid gap-5 sm:mt-12 sm:gap-6">
-              {SUPPORTING.map((line, i) => (
+            <ul className="mt-8 grid gap-4 sm:mt-10 sm:gap-5">
+              {SUPPORTING.map((line) => (
                 <motion.li
                   key={line}
                   initial={false}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: "-15%" }}
-                  transition={{ duration: 0.7, ease: EASE, delay: 0.1 + i * 0.08 }}
-                  className="flex items-start gap-4 border-l-2 border-[#C8A96A]/55 pl-5 text-xl font-medium leading-snug text-white/88 sm:text-2xl"
+                  transition={{ duration: 0.7, ease: EASE, delay: 0.1 }}
+                  className="text-2xl font-medium leading-snug text-white/90 sm:text-3xl"
                 >
-                  <span className="font-display text-sm text-[#C8A96A] tabular-nums">
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
                   <span>{line}</span>
                 </motion.li>
               ))}
@@ -1588,34 +1669,25 @@ function SupportLevels() {
   ];
 
   return (
-    <section className="relative overflow-hidden bg-[linear-gradient(180deg,#fbf8f1_0%,#f4efe5_100%)] py-24 sm:py-28">
+    <section className="relative overflow-hidden bg-[linear-gradient(180deg,#fbf8f1_0%,#f4efe5_100%)] py-18 sm:py-22">
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_50%_-10%,rgba(200,169,106,0.18),transparent_55%)]"
       />
       <Container className="relative">
         <div className="mx-auto max-w-3xl text-center">
-          <motion.p
-            initial={false}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-15%" }}
-            transition={{ duration: 0.7, ease: EASE }}
-            className="text-xs font-semibold uppercase tracking-[0.32em] text-[#C8A96A]"
-          >
-            Engagements
-          </motion.p>
           <motion.h2
             initial={false}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-15%" }}
             transition={{ duration: 0.85, ease: EASE, delay: 0.08 }}
-            className="font-display mt-5 text-balance text-4xl font-semibold leading-[1.04] text-[#0B1F3A] sm:text-5xl"
+            className="font-display text-balance text-4xl font-semibold leading-[1.04] text-[#0B1F3A] sm:text-5xl"
           >
             Choose the level of support your business needs.
           </motion.h2>
         </div>
 
-        <div className="mt-14 grid gap-6 md:grid-cols-3">
+        <div className="mt-10 grid gap-6 md:grid-cols-3">
           {items.map((item, i) => (
             <motion.div
               key={item.title}
@@ -1626,21 +1698,18 @@ function SupportLevels() {
               className="group relative flex flex-col rounded-xl border border-[#0B1F3A]/12 bg-white p-7 shadow-[0_18px_44px_rgba(11,31,58,0.08)] transition-[transform,box-shadow,border-color] duration-300 ease-out hover:-translate-y-1 hover:border-[#C8A96A]/55 hover:shadow-[0_28px_70px_rgba(11,31,58,0.14)] lg:bg-white/85 lg:backdrop-blur-sm"
             >
               <div className="pointer-events-none absolute inset-x-7 top-0 h-px bg-gradient-to-r from-transparent via-[#C8A96A]/0 to-transparent transition-[background-image] duration-300 group-hover:via-[#C8A96A]/55" />
-              <p className="font-display text-sm text-[#C8A96A] tabular-nums">
-                {String(i + 1).padStart(2, "0")}
-              </p>
-              <h3 className="font-display mt-3 text-2xl font-semibold leading-tight text-[#0B1F3A]">
+              <h3 className="font-display text-3xl font-semibold leading-tight text-[#0B1F3A]">
                 {item.title}
               </h3>
-              <p className="mt-4 text-sm leading-7 text-slate-600">
+              <p className="mt-4 text-lg leading-8 text-slate-600">
                 {item.body}
               </p>
-              <Link
+              <LocalizedLink
                 href="/contact"
-                className="mt-6 inline-flex touch-manipulation items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-[#0B1F3A] transition-colors group-hover:text-[#C8A96A] active:opacity-70"
+                className="mt-6 inline-flex touch-manipulation items-center gap-1.5 text-sm font-semibold uppercase tracking-[0.16em] text-[#0B1F3A] transition-colors group-hover:text-[#C8A96A] active:opacity-70"
               >
                 {item.line}
-              </Link>
+              </LocalizedLink>
             </motion.div>
           ))}
         </div>
@@ -1655,28 +1724,19 @@ function SupportLevels() {
 
 function ServicesCTA() {
   return (
-    <section className="relative overflow-hidden bg-[linear-gradient(180deg,#fbf8f1_0%,#f1ead9_100%)] py-28 sm:py-32">
+    <section className="relative overflow-hidden bg-[linear-gradient(180deg,#fbf8f1_0%,#f1ead9_100%)] py-20 sm:py-24">
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_50%_-10%,rgba(200,169,106,0.18),transparent_55%)]"
       />
       <Container className="relative">
         <div className="mx-auto max-w-3xl text-center">
-          <motion.p
-            initial={false}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-15%" }}
-            transition={{ duration: 0.7, ease: EASE }}
-            className="text-xs font-semibold uppercase tracking-[0.32em] text-[#C8A96A]"
-          >
-            Begin
-          </motion.p>
           <motion.h2
             initial={false}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-15%" }}
             transition={{ duration: 0.9, ease: EASE, delay: 0.08 }}
-            className="font-display mt-6 text-balance text-5xl font-semibold leading-[1.02] text-[#0B1F3A] sm:text-6xl lg:text-7xl"
+            className="font-display text-balance text-5xl font-semibold leading-[1.02] text-[#0B1F3A] sm:text-6xl lg:text-7xl"
           >
             A quiet system, designed around your business.
           </motion.h2>
@@ -1685,7 +1745,7 @@ function ServicesCTA() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-15%" }}
             transition={{ duration: 0.85, ease: EASE, delay: 0.18 }}
-            className="mx-auto mt-7 max-w-xl text-base leading-8 text-[#0B1F3A]/72"
+            className="mx-auto mt-7 max-w-2xl text-xl leading-9 text-[#0B1F3A]/72"
           >
             Start with a free audit. We map your workflow, identify where time is
             lost, and propose the smallest, most precise system that delivers the
@@ -1702,6 +1762,15 @@ function ServicesCTA() {
               Request a free audit
             </PrimaryCTA>
           </motion.div>
+          <motion.p
+            initial={false}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-15%" }}
+            transition={{ duration: 0.85, ease: EASE, delay: 0.28 }}
+            className="mx-auto mt-6 max-w-xl border-t border-[#0B1F3A]/12 pt-4 text-sm font-semibold leading-7 text-[#0B1F3A] sm:text-base"
+          >
+            Custom offers start from €1,000. Final quote depends on scope, workflow complexity, and integrations.
+          </motion.p>
         </div>
       </Container>
     </section>
